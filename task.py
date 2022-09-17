@@ -4,6 +4,8 @@ from enum import Enum
 from time import sleep
 import win32clipboard
 
+import json
+
 class WorkingStates(Enum):
     INIT = 1
     USE_ALT = 2
@@ -15,8 +17,11 @@ class Task:
     keyboard = Controller()
     state = WorkingStates.INIT
 
-    mods = ["Flame Shaper's", "Frost Singer's", "Thunderhand's", "Mad Lord's", "Lithomancer's"]
-    white_item_name = "Carved Wand"
+    f = open('data.json')
+    data = json.load(f)
+
+    mods = data["mods"]
+    white_item_name = data["white_item_name"]
     is_prefix = True
 
     def tick(self, mouse, alt_pos, aug_pos, item_pos):
