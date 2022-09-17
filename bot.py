@@ -1,6 +1,6 @@
 from enum import Enum
 from sys import flags
-from time import sleep
+from pynput.mouse import Button, Controller
 
 from flags import Flags
 
@@ -10,12 +10,19 @@ class BotStates(Enum):
   GET_ALT_ORB_POSITION = 3
   GET_AUG_ORB_POSITION = 4
   GET_ITEM_POSITION = 5
+  WORKING = 6
 
 class Bot:
   flags = Flags()
   not_shutdown = True
   block_state_change = False
   state = BotStates.INIT
+
+  mouse = Controller()
+
+  alt_pos = None
+  aug_pos = None
+  item_pos = None
 
   def next_command(self):
     if self.block_state_change:
@@ -29,7 +36,9 @@ class Bot:
     if self.state == BotStates.GET_AUG_ORB_POSITION:
       print("position the mouse on ITEM: press ctrl+alt+o", end="\r")
     if self.state == BotStates.GET_ITEM_POSITION:
-      print("press \"ctrl + alt + p\" to BEGIN THE WORK", end="\r")
+      print("press \"ctrl + alt + o\" to BEGIN THE WORK", end="\r")
+    if self.state == BotStates.WORKING:
+      print("alt_pos", self.alt_pos, "aug_pos", self.aug_pos, "item_pos", self.item_pos, end="\r")
   
   def set_next_state(self):
     # print(self.state)
@@ -41,15 +50,23 @@ class Bot:
       self.set_state_to_aug_orb_position()
     elif self.state == BotStates.GET_AUG_ORB_POSITION:
       self.set_state_to_item_position()
+    elif self.state == BotStates.GET_ITEM_POSITION:
+      self.set_state_to_working()
   
   def set_state_to_alt_orb_position(self):
+    self.alt_pos = self.mouse.position
     self.state = BotStates.GET_ALT_ORB_POSITION
   
   def set_state_to_aug_orb_position(self):
+    self.aug_pos = self.mouse.position
     self.state = BotStates.GET_AUG_ORB_POSITION
   
   def set_state_to_item_position(self):
+    self.item_pos = self.mouse.position
     self.state = BotStates.GET_ITEM_POSITION
+  
+  def set_state_to_working(self):
+    self.state = BotStates.WORKING
   
   def start_bot(self):
     if self.block_state_change:
