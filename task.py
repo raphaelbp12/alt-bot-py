@@ -8,13 +8,14 @@ class WorkingStates(Enum):
     INIT = 1
     USE_ALT = 2
     USE_AUG = 3
-    CHECK_ITEM = 4
-    FINISHED = 5
-    PAUSED = 6
+    FINISHED = 4
+    PAUSED = 5
 
 class Task:
     keyboard = Controller()
     state = WorkingStates.INIT
+
+    mods = ["Sprinter's"]
 
     def tick(self, mouse, alt_pos, aug_pos, item_pos):
         if self.state == WorkingStates.INIT:
@@ -23,12 +24,7 @@ class Task:
             self.use_alt(mouse, alt_pos, item_pos)
             sleep(0.1)
         elif self.state == WorkingStates.USE_AUG:
-            mouse.position = aug_pos
-            self.state = WorkingStates.CHECK_ITEM
-            sleep(0.1)
-        elif self.state == WorkingStates.CHECK_ITEM:
-            mouse.position = item_pos
-            self.state = WorkingStates.USE_ALT
+            self.use_aug(mouse, aug_pos, item_pos)
             sleep(0.1)
 
     def random_sleep(self):
@@ -45,30 +41,56 @@ class Task:
         mouse.release(Button.right)
 
     def check_item(self):
+        self.random_sleep()
         self.keyboard.press(Key.ctrl_l)
         self.keyboard.press('c')
         self.keyboard.release('c')
         self.keyboard.release(Key.ctrl_l)
+        self.random_sleep()
 
         win32clipboard.OpenClipboard()
         data: str = win32clipboard.GetClipboardData()
         win32clipboard.CloseClipboard()
+        self.random_sleep()
 
         data_exploded = data.split("--------")
-        mods_raw = data_exploded[-1]
-        mods_exploded = mods_raw.splitlines()
+        names_raw = data_exploded[0]
+        names_exploded = names_raw.splitlines()
+        item_name = names_exploded[-1]
 
-        print("data_exploded", len(data_exploded), "mods", len(mods_exploded))
+        mods_found_num = 0
+        for mod in self.mods:
+            if mod in item_name:
+                mods_found_num += 1
+        
+        return mods_found_num > 0
 
     def use_alt(self, mouse, alt_pos, item_pos):
         mouse.position = alt_pos
         self.random_sleep()
-        # self.press_mouse_right()
+        self.press_mouse_right(mouse)
         self.random_sleep()
         mouse.position = item_pos
         self.random_sleep()
-        # self.press_mouse_left()
+        self.press_mouse_left(mouse)
         self.random_sleep()
         # check item
-        self.check_item()
+        if self.check_item():
+            self.state = WorkingStates.FINISHED
+            return
         self.state = WorkingStates.USE_AUG
+
+    def use_aug(self, mouse, aug_pos, item_pos):
+        mouse.position = aug_pos
+        self.random_sleep()
+        self.press_mouse_right(mouse)
+        self.random_sleep()
+        mouse.position = item_pos
+        self.random_sleep()
+        self.press_mouse_left(mouse)
+        self.random_sleep()
+        # check item
+        if self.check_item():
+            self.state = WorkingStates.FINISHED
+            return
+        self.state = WorkingStates.USE_ALT
