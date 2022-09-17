@@ -30,15 +30,15 @@ class Bot:
     if self.block_state_change:
       return
     if self.state == BotStates.INIT:
-      print("press \"ctrl + alt + p\" to start", end="\r")
+      print("press \"ctrl + alt + l\" to start", end="\r")
     if self.state == BotStates.START:
-      print("position the mouse on ALTERATION ORB: press ctrl+alt+o", end="\r")
+      print("position the mouse on ALTERATION ORB: press ctrl+alt+j", end="\r")
     if self.state == BotStates.GET_ALT_ORB_POSITION:
-      print("position the mouse on AUGMENTATION ORB: press ctrl+alt+o", end="\r")
+      print("position the mouse on AUGMENTATION ORB: press ctrl+alt+j", end="\r")
     if self.state == BotStates.GET_AUG_ORB_POSITION:
-      print("position the mouse on ITEM: press ctrl+alt+o", end="\r")
+      print("position the mouse on ITEM: press ctrl+alt+j", end="\r")
     if self.state == BotStates.GET_ITEM_POSITION:
-      print("press \"ctrl + alt + o\" to BEGIN THE WORK", end="\r")
+      print("press \"ctrl + alt + j\" to BEGIN THE WORK", end="\r")
     if self.state == BotStates.WORKING:
       print("alt_pos", self.alt_pos, "aug_pos", self.aug_pos, "item_pos", self.item_pos, end="\r")
       self.task.tick(self.mouse, self.alt_pos, self.aug_pos, self.item_pos)
@@ -80,11 +80,11 @@ class Bot:
   def receive_key_press(self, key):
     self.flags.check_received_ctrl_press(key)
     self.flags.check_received_alt_press(key)
-    if '{0}'.format(key) == "<79>":
+    if '{0}'.format(key) == "<74>":
         self.set_next_state()
         self.block_state_change = True
         # print("cctrl-alt-o", '\n')
-    if '{0}'.format(key) == "<80>":
+    if '{0}'.format(key) == "<76>":
         self.start_bot()
         self.block_state_change = True
         # print("cctrl-alt-p", '\n')
