@@ -15,7 +15,7 @@ class Task:
     keyboard = Controller()
     state = WorkingStates.INIT
 
-    mods = ["Sprinter's"]
+    mods = ["Flame Shaper's", "Frost Singer's", "Thunderhand's", "Mad Lord's", "Lithomancer's"]
 
     def tick(self, mouse, alt_pos, aug_pos, item_pos):
         if self.state == WorkingStates.INIT:
