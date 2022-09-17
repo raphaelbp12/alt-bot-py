@@ -1,6 +1,7 @@
 from enum import Enum
 from sys import flags
 from pynput.mouse import Button, Controller
+from pynput.keyboard import Key
 
 from flags import Flags
 from task import Task
@@ -16,7 +17,7 @@ class BotStates(Enum):
 class Bot:
   flags = Flags()
   task = Task()
-  not_shutdown = True
+  shutdown = False
   block_state_change = False
   state = BotStates.INIT
 
@@ -27,6 +28,8 @@ class Bot:
   item_pos = None
 
   def next_command(self):
+    if self.shutdown:
+      return
     if self.block_state_change:
       return
     if self.state == BotStates.INIT:
@@ -80,6 +83,7 @@ class Bot:
   def receive_key_press(self, key):
     self.flags.check_received_ctrl_press(key)
     self.flags.check_received_alt_press(key)
+
     if '{0}'.format(key) == "<74>":
         self.set_next_state()
         self.block_state_change = True
