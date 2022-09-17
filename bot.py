@@ -3,6 +3,7 @@ from sys import flags
 from pynput.mouse import Button, Controller
 
 from flags import Flags
+from task import Task
 
 class BotStates(Enum):
   INIT = 1
@@ -14,6 +15,7 @@ class BotStates(Enum):
 
 class Bot:
   flags = Flags()
+  task = Task()
   not_shutdown = True
   block_state_change = False
   state = BotStates.INIT
@@ -39,6 +41,7 @@ class Bot:
       print("press \"ctrl + alt + o\" to BEGIN THE WORK", end="\r")
     if self.state == BotStates.WORKING:
       print("alt_pos", self.alt_pos, "aug_pos", self.aug_pos, "item_pos", self.item_pos, end="\r")
+      self.task.tick(self.mouse, self.alt_pos, self.aug_pos, self.item_pos)
   
   def set_next_state(self):
     # print(self.state)
