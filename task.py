@@ -35,7 +35,7 @@ class Task:
             self.random_sleep()
 
     def random_sleep(self):
-        sleep(0.015)
+        sleep(0.02)
 
     def press_mouse_left(self, mouse):
         mouse.press(Button.left)
@@ -57,15 +57,19 @@ class Task:
 
         win32clipboard.OpenClipboard()
         self.random_sleep()
-        data: str = win32clipboard.GetClipboardData()
-        self.random_sleep()
-        win32clipboard.CloseClipboard()
-        self.random_sleep()
-        data_exploded = data.split("--------")
-        names_raw = data_exploded[0]
-        names_exploded = names_raw.splitlines()
-        item_name = names_exploded[-1]
-        return item_name
+        try:
+            data: str = win32clipboard.GetClipboardData()
+            self.random_sleep()
+            win32clipboard.CloseClipboard()
+            self.random_sleep()
+            data_exploded = data.split("--------")
+            names_raw = data_exploded[0]
+            names_exploded = names_raw.splitlines()
+            item_name = names_exploded[-1]
+            return item_name
+        except:
+            self.random_sleep()
+            return self.get_item_name()
 
     def check_has_prefix(self, item_name: str):
         return item_name.index(self.white_item_name) != 0
